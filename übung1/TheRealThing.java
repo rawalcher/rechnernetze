@@ -5,6 +5,7 @@ public class TheRealThing extends Thread {
     private String filename;
     private int start;
     private int end;
+    private static final int NUM_ITERATIONS = 1000;
     /**
      * Creates a new TheRealThing thread which operates
      * on the indexes start to end.
@@ -19,12 +20,19 @@ public class TheRealThing extends Thread {
      * returns the result
      */
     public float eine_komplizierte_Berechnung(float[] array) {
-        // TODO ... erfinden Sie etwas, seien Sie kreativ!
-        float result = 0;
-        for(int i=0;i<array.length;i++){
-            result += array[i];
+       float[] tempArray = array.clone();
+        float totalChange =0;
+
+        for (int iter = 0; iter < NUM_ITERATIONS; iter++) {
+            for (int i = 1; i < array.length - 1; i++) {
+                float average = (tempArray[i - 1] + tempArray[i + 1]) / 2;
+
+                float change = (average - tempArray[i]) * 0.01f;
+                tempArray[i] += change;
+                totalChange += Math.abs(change);
+            }
         }
-        return result;
+        return totalChange;
     }
     public void run() {
         // TODO ...
