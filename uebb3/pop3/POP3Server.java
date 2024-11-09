@@ -1,21 +1,27 @@
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class SimplePOP3Server {
+public class POP3Server {
     private static final int PORT = 110; // standard POP3 port
-    private static SampleDataBase database = new SampleDataBase();
+    private static final SampleDataBase database = new SampleDataBase();
+    private static final Logger logger = Logger.getLogger(POP3Server.class.getName());
 
     public static void main(String[] args) {
         ExecutorService threadPool = Executors.newCachedThreadPool();
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("POP3 Server @ " + PORT);
+
+            logger.info("POP3 Server @ " + PORT);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                threadPool.submit(new ClientHandler(clientSocket));
+                threadPool.submit(new ClientHandler(clientSocket, database));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -24,144 +30,399 @@ public class SimplePOP3Server {
 }
 
 class ClientHandler implements Runnable {
-    private Socket clientSocket;
-    private BufferedReader reader;
-    private PrintWriter writer;
+    private static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
 
-    public ClientHandler(Socket clientSocket) {
+    private final Socket clientSocket;
+    private BufferedReader reader;
+    private BufferedWriter writer;
+    private boolean authenticated = false;
+    private boolean quit = false;
+    private final SampleDataBase database;
+    private final Set<Integer> deletedMessages = new HashSet<>();
+
+    private static final String errNoSuchMessage = "-ERR No such message";
+    private static final String errInvalidMessage = "-ERR Invalid message number";
+    private static final String infoMarkedDel = "marked as deleted";
+
+    public ClientHandler(Socket clientSocket, SampleDataBase database) {
         this.clientSocket = clientSocket;
+        this.database = database;
+    }
+
+    private void sendLine(String message) throws IOException {
+        writer.write(message + "\r\n");
+        writer.flush();
+        logger.fine("Sent: [" + message + "]");
     }
 
     @Override
     public void run() {
         try {
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            writer = new PrintWriter(clientSocket.getOutputStream(), true);
+            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.US_ASCII));
+            writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.US_ASCII));
 
-            writer.println("+OK Simple POP3 Server ready");
+            logger.info("Client connected from " + clientSocket.getRemoteSocketAddress());
+            sendLine("+OK Simple POP3 Server ready");
 
-            boolean authenticated = false;
             String line;
-            while ((line = reader.readLine()) != null) {
+
+            while (!quit && (line = reader.readLine()) != null) {
+                logger.fine("Received command: [" + line + "]");
                 String[] commandParts = line.split(" ");
                 String command = commandParts[0].toUpperCase();
 
-                switch (command) {
-                    case "USER":
-                        // accept every user
-                        writer.println("+OK user accepted");
-                        break;
-                    case "PASS":
-                        // accept every password
-                        writer.println("+OK pass accepted");
-                        authenticated = true;
-                        break;
-                    case "STAT":
-                        // should list a short summary of the messages
-                        if (authenticated) {
-                            int messageCount = SampleDataBase.messages.size(); // SampleDataBase is a ArrayList of Strings
-                            int totalSize = SampleDataBase.messages.stream().mapToInt(String::length).sum(); // getting every message adding up to the total size
-                            writer.println("+OK " + messageCount + " " + totalSize);
-                        } else {
-                            writer.println("-ERR not authenticated"); // will never happen
-                        }
-                        break;
+                try {
+                    switch (command) {
+                        case "USER":
+                            handleUSER(commandParts);
+                            break;
 
-                    case "LIST":
-                        // list all email
-                        if (authenticated) {
-                            writer.println("+OK listing messages");
-                            for (int i = 0; i < SampleDataBase.messages.size(); i++) {
-                                writer.println((i + 1) + " " + SampleDataBase.messages.get(i).length());
-                            }
-                            writer.println(".");
-                        } else {
-                            writer.println("-ERR not authenticated"); // will never happen
-                        }
-                        break;
-                    case "RETR":
-                        // Retrieve the full message content for the specified message number
-                        if (authenticated && commandParts.length > 1) {
-                            int msgIndex = Integer.parseInt(commandParts[1]) - 1;
-                            if (msgIndex >= 0 && msgIndex < SampleDataBase.messages.size()) {
-                                String message = SampleDataBase.messages.get(msgIndex);
-                                writer.println("+OK " + message.length() + " octets");
+                        case "PASS":
+                            handlePASS(commandParts);
+                            break;
 
-                                // Send the message line by line, ensuring \r\n at the end of each line
-                                String[] lines = message.split("\n", -1);
-                                for (String msgLine : lines) {
-                                    writer.println(msgLine.replace("\n", "\r\n"));
-                                }
-                                writer.println(".");
-                            } else {
-                                writer.println("-ERR no such message");
-                            }
-                        } else {
-                            writer.println("-ERR invalid command or not authenticated");
-                        }
-                        break;
-                    case "TOP":
-                        // returns header + num of specified lines of message
-                        if (authenticated && commandParts.length > 2) {
-                            int msgIndex = Integer.parseInt(commandParts[1]) - 1;
-                            int numLines = Integer.parseInt(commandParts[2]);
-                            if (msgIndex >= 0 && msgIndex < SampleDataBase.messages.size()) {
-                                String message = SampleDataBase.messages.get(msgIndex);
-                                String[] lines = message.split("\n", -1); // -1 means it will split until done
-                                writer.println("+OK");
+                        case "STAT":
+                            handleSTAT();
+                            break;
 
-                                // Send header
-                                boolean headerEndFound = false;
-                                for (String msgLine : lines) {
-                                    writer.println(msgLine.replace("\n", "\r\n")); // POP3 requires \r\n as EOL
-                                    if (msgLine.isEmpty()) {
-                                        headerEndFound = true;
-                                        break;
-                                    }
-                                }
+                        case "LIST":
+                            handleLIST(commandParts);
+                            break;
 
-                                // Send body lines
-                                if (headerEndFound) {
-                                    int count = 0;
-                                    for (int i = lines.length - numLines; i < lines.length && count < numLines; i++) {
-                                        writer.println(lines[i].replace("\n", "\r\n"));
-                                        count++;
-                                    }
-                                }
-                                writer.println(".");
-                            } else {
-                                writer.println("-ERR no such message");
-                            }
-                        } else {
-                            writer.println("-ERR invalid command or not authenticated");
-                        }
-                        break;
+                        case "RETR":
+                            handleRETR(commandParts);
+                            break;
 
-                    case "QUIT":
-                        writer.println("+OK goodbye");
-                        clientSocket.close();
-                        return;
-                    case "CAPA":
-                        // returns the possible commands of server
-                        writer.println("+OK Capability list follows");
-                        writer.println("USER");
-                        writer.println("PASS");
-                        writer.println("STAT");
-                        writer.println("LIST");
-                        writer.println("RETR");
-                        writer.println("TOP");
-                        writer.println("QUIT");
-                        writer.println("CAPA");
-                        writer.println(".");
-                        break;
+                        case "TOP":
+                            handleTOP(commandParts);
+                            break;
 
-                    default:
-                        writer.println("-ERR unknown command");
-                        break;
+                        case "DELE":
+                            handleDELE(commandParts);
+                            break;
+
+                        case "QUIT":
+                            handleQUIT();
+                            break;
+
+                        case "CAPA":
+                            handleCAPA();
+                            break;
+
+                        default:
+                            handleUnknownCommand(command);
+                            break;
+                    }
+                } catch (Exception e) {
+                    sendLine("-ERR " + e.getMessage());
+                    logger.log(Level.WARNING, "Error handling command [" + command + "]: " + e.getMessage(), e);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE,
+                    "Connection error: " + e.getMessage(),
+                    e);
+        } finally {
+            try {
+                clientSocket.close();
+                logger.info("Client disconnected from " + clientSocket.getRemoteSocketAddress());
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Error closing client socket: " + e.getMessage(), e);
+            }
         }
     }
-}
+
+    private void handleUSER(String[] commandParts) throws IOException {
+        if (commandParts.length != 2) {
+            sendLine("-ERR Syntax: USER username");
+            return;
+        }
+        // Accept any username for simplicity
+        authenticated = false;
+        sendLine("+OK User accepted");
+        logger.info("USER command accepted for user: " + commandParts[1]);
+    }
+
+    private void handlePASS(String[] commandParts) throws IOException {
+        if (commandParts.length != 2) {
+            sendLine("-ERR Syntax: PASS password");
+            return;
+        }
+        // Accept any password for simplicity
+        authenticated = true;
+        sendLine("+OK User authenticated");
+        logger.info("User authenticated.");
+    }
+
+    private void handleSTAT() throws IOException {
+        if (authenticated) {
+            int messageCount = database.messages.size() - deletedMessages.size();
+            int totalSize = 0;
+            for (int i = 0; i < database.messages.size(); i++) {
+                if (!deletedMessages.contains(i)) {
+                    totalSize += database.messages.get(i).length();
+                }
+            }
+            sendLine("+OK " + messageCount + " " + totalSize);
+            logger.info("STAT command - " + messageCount + " messages, total size: " + totalSize);
+        } else {
+            sendLine("-ERR Not authenticated");
+            logger.warning("STAT command - Not authenticated.");
+        }
+    }
+
+    private void handleLIST(String[] commandParts) throws IOException {
+        if (!isAuthenticated()) {
+            sendError("Not authenticated");
+            logger.warning("LIST command - Not authenticated.");
+            return;
+        }
+
+        if (commandParts.length == 1) {
+            listAllMessages();
+        } else if (commandParts.length == 2) {
+            listSingleMessage(commandParts[1]);
+        } else {
+            sendError("Invalid arguments");
+            logger.warning("LIST command - Invalid arguments.");
+        }
+    }
+
+    private boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    private void sendError(String errorMessage) throws IOException {
+        sendLine("-ERR " + errorMessage);
+    }
+
+    private void listAllMessages() throws IOException {
+        sendLine("+OK Listing messages");
+        logger.info("LIST command - Listing all messages.");
+
+        for (int i = 0; i < database.messages.size(); i++) {
+            if (!isMessageDeleted(i)) {
+                sendLine(formatMessageEntry(i));
+            }
+        }
+        sendLine(".");
+    }
+
+    private String formatMessageEntry(int index) {
+        return String.format("%d %d", index + 1, database.messages.get(index).length());
+    }
+
+    private void listSingleMessage(String messageNumber) throws IOException {
+        int msgIndex;
+        try {
+            msgIndex = parseMessageIndex(messageNumber) - 1;
+        } catch (NumberFormatException e) {
+            sendError(errInvalidMessage);
+            logger.warning("LIST command - Invalid message number.");
+            return;
+        }
+
+        if (!isValidMessageIndex(msgIndex)) {
+            sendError(errNoSuchMessage);
+            logger.warning("LIST command - No such message.");
+            return;
+        }
+
+        if (isMessageDeleted(msgIndex)) {
+            sendError("Message marked as deleted");
+            logger.warning("LIST command - Message " + (msgIndex + 1) + infoMarkedDel);
+            return;
+        }
+
+        sendSingleMessageEntry(msgIndex);
+    }
+
+    private boolean isValidMessageIndex(int msgIndex) {
+        return msgIndex >= 0 && msgIndex < database.messages.size();
+    }
+
+
+    private void sendSingleMessageEntry(int msgIndex) throws IOException {
+        String response = String.format("+OK %d %d", msgIndex + 1, database.messages.get(msgIndex).length());
+        sendLine(response);
+        logger.info("LIST command - Listing message " + (msgIndex + 1));
+    }
+
+    private void handleRETR(String[] commandParts) throws IOException {
+        if (authenticated && commandParts.length == 2) {
+            try {
+                int msgIndex = Integer.parseInt(commandParts[1]) - 1;
+                if (msgIndex >= 0 && msgIndex < database.messages.size()) {
+                    if (deletedMessages.contains(msgIndex)) {
+                        sendLine("-ERR Message marked as deleted");
+                        logger.warning("RETR command - Message " + (msgIndex + 1) + infoMarkedDel);
+                        return;
+                    }
+                    String message = database.messages.get(msgIndex);
+                    sendLine("+OK " + message.length() + " octets");
+                    logger.info("RETR command - Retrieving message " + (msgIndex + 1));
+                    sendMessageContent(message);
+                } else {
+                    sendLine(errNoSuchMessage);
+                    logger.warning("RETR command - No such message");
+                }
+            } catch (NumberFormatException e) {
+                sendLine(errInvalidMessage);
+                logger.warning("RETR command - Invalid message number");
+            }
+        } else {
+            sendLine("-ERR Invalid command or not authenticated");
+            logger.warning("RETR command - Invalid command or not authenticated.");
+        }
+    }
+
+    private void handleDELE(String[] commandParts) throws IOException {
+        if (authenticated && commandParts.length == 2) {
+            try {
+                int msgIndex = Integer.parseInt(commandParts[1]) - 1;
+                if (msgIndex >= 0 && msgIndex < database.messages.size()) {
+                    if (deletedMessages.contains(msgIndex)) {
+                        sendLine("-ERR Message already marked as deleted");
+                        logger.warning("DELE command - Message " + (msgIndex + 1) + " already marked as deleted");
+                        return;
+                    }
+                    deletedMessages.add(msgIndex);
+                    sendLine("+OK Message " + (msgIndex + 1) + " marked for deletion");
+                    logger.info("DELE command - Marked message " + (msgIndex + 1) + " for deletion");
+                } else {
+                    sendLine(errNoSuchMessage);
+                    logger.warning("DELE command - No such message");
+                }
+            } catch (NumberFormatException e) {
+                sendLine(errInvalidMessage);
+                logger.warning("DELE command - Invalid message number");
+            }
+        } else {
+            sendLine("-ERR Invalid command or not authenticated");
+            logger.warning("DELE command - Invalid command or not authenticated.");
+        }
+    }
+
+    private void handleQUIT() throws IOException {
+        sendLine("+OK Goodbye");
+        logger.info("QUIT command - Client disconnected.");
+
+        // Physically remove deleted messages
+        // Remove messages in reverse order to avoid index shifting
+        List<Integer> toDelete = new ArrayList<>(deletedMessages);
+        Collections.sort(toDelete, Collections.reverseOrder());
+        for (int index : toDelete) {
+            database.messages.remove(index);
+        }
+        quit = true;
+    }
+
+    private void handleCAPA() throws IOException {
+        sendLine("+OK Capability list follows");
+        sendLine("USER");
+        sendLine("PASS");
+        sendLine("STAT");
+        sendLine("LIST");
+        sendLine("RETR");
+        sendLine("DELE");
+        sendLine("QUIT");
+        sendLine("CAPA");
+        sendLine("TOP");
+        sendLine(".");
+        logger.info("CAPA command - Capability list sent.");
+    }
+
+    private void handleUnknownCommand(String command) throws IOException {
+        sendLine("-ERR Unknown command");
+        logger.warning("Unknown command: " + command);
+    }
+
+    private void sendMessageContent(String message) throws IOException {
+        String[] lines = message.split("\r?\n", -1);
+        for (String msgLine : lines) {
+            sendLine(applyDotStuffing(msgLine));
+        }
+        sendLine(".");
+    }
+
+    private String applyDotStuffing(String line) {
+        if (line.startsWith(".")) {
+            return "." + line;
+        }
+        return line;
+    }
+
+        private void handleTOP(String[] commandParts) throws IOException {
+            if (!isValidCommand(commandParts)) {
+                sendError("Invalid command or not authenticated");
+                logger.warning("TOP command - Invalid command or not authenticated.");
+                return;
+            }
+
+            int msgIndex;
+            int lines;
+            try {
+                msgIndex = parseMessageIndex(commandParts[1]) - 1;
+                lines = parseLineCount(commandParts[2]);
+            } catch (NumberFormatException e) {
+                sendError("Invalid message number or line count");
+                logger.warning("TOP command - Invalid message number or line count");
+                return;
+            }
+
+            if (!isMessageIndexValid(msgIndex)) {
+                sendError("No such message");
+                logger.warning("TOP command - No such message");
+                return;
+            }
+
+            if (isMessageDeleted(msgIndex)) {
+                sendError("Message marked as deleted");
+                logger.warning("TOP command - Message " + (msgIndex + 1) + infoMarkedDel);
+                return;
+            }
+
+            sendHeadersAndLines(msgIndex, lines);
+        }
+
+        private boolean isValidCommand(String[] commandParts) {
+            return authenticated && commandParts.length == 3;
+        }
+
+        private int parseMessageIndex(String indexStr) throws NumberFormatException {
+            return Integer.parseInt(indexStr);
+        }
+
+        private int parseLineCount(String linesStr) throws NumberFormatException {
+            return Integer.parseInt(linesStr);
+        }
+
+        private boolean isMessageIndexValid(int msgIndex) {
+            return msgIndex >= 0 && msgIndex < database.messages.size();
+        }
+
+        private boolean isMessageDeleted(int msgIndex) {
+            return deletedMessages.contains(msgIndex);
+        }
+
+        private void sendHeadersAndLines(int msgIndex, int lines) throws IOException {
+            String message = database.messages.get(msgIndex);
+            sendLine("+OK");
+            logger.info("TOP command - Retrieving headers and first " + lines + " lines of message " + (msgIndex + 1));
+
+            String[] messageLines = message.split("\r?\n", -1);
+            boolean bodyStarted = false;
+            int lineCount = 0;
+
+            for (String msgLine : messageLines) {
+                if (msgLine.isEmpty()) {
+                    bodyStarted = true;
+                }
+                sendLine(applyDotStuffing(msgLine));
+                if (bodyStarted && ++lineCount >= lines) {
+                    break;
+                }
+            }
+            sendLine(".");
+        }
+    }
