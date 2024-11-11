@@ -31,6 +31,7 @@ public class POP3Server {
 
 class ClientHandler implements Runnable {
     private static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
+    public static final String errMessageMarkedDeleted = "Message marked as deleted";
 
     private final Socket clientSocket;
     private BufferedReader reader;
@@ -40,9 +41,11 @@ class ClientHandler implements Runnable {
     private final SampleDataBase database;
     private final Set<Integer> deletedMessages = new HashSet<>();
 
-    private static final String errNoSuchMessage = "-ERR No such message";
-    private static final String errInvalidMessage = "-ERR Invalid message number";
+    private static final String errNoSuchMessage = "No such message";
+    private static final String errInvalidMessage = "Invalid message number";
+    private static final String errInvalidCommandOrNotAuthenticated = "Invalid command or not authenticated";
     private static final String infoMarkedDel = "marked as deleted";
+
 
     public ClientHandler(Socket clientSocket, SampleDataBase database) {
         this.clientSocket = clientSocket;
@@ -114,7 +117,7 @@ class ClientHandler implements Runnable {
                             break;
                     }
                 } catch (Exception e) {
-                    sendLine("-ERR " + e.getMessage());
+                    sendError(e.getMessage());
                     logger.log(Level.WARNING, "Error handling command [" + command + "]: " + e.getMessage(), e);
                 }
             }
@@ -134,7 +137,7 @@ class ClientHandler implements Runnable {
 
     private void handleUSER(String[] commandParts) throws IOException {
         if (commandParts.length != 2) {
-            sendLine("-ERR Syntax: USER username");
+            sendError("Syntax: USER username");
             return;
         }
         // Accept any username for simplicity
@@ -145,7 +148,7 @@ class ClientHandler implements Runnable {
 
     private void handlePASS(String[] commandParts) throws IOException {
         if (commandParts.length != 2) {
-            sendLine("-ERR Syntax: PASS password");
+            sendError("Syntax: PASS password");
             return;
         }
         // Accept any password for simplicity
@@ -166,7 +169,7 @@ class ClientHandler implements Runnable {
             sendLine("+OK " + messageCount + " " + totalSize);
             logger.info("STAT command - " + messageCount + " messages, total size: " + totalSize);
         } else {
-            sendLine("-ERR Not authenticated");
+            sendError("Not authenticated");
             logger.warning("STAT command - Not authenticated.");
         }
     }
@@ -229,7 +232,7 @@ class ClientHandler implements Runnable {
         }
 
         if (isMessageDeleted(msgIndex)) {
-            sendError("Message marked as deleted");
+            sendError(errMessageMarkedDeleted);
             logger.warning("LIST command - Message " + (msgIndex + 1) + infoMarkedDel);
             return;
         }
@@ -254,7 +257,7 @@ class ClientHandler implements Runnable {
                 int msgIndex = Integer.parseInt(commandParts[1]) - 1;
                 if (msgIndex >= 0 && msgIndex < database.messages.size()) {
                     if (deletedMessages.contains(msgIndex)) {
-                        sendLine("-ERR Message marked as deleted");
+                        sendError(errMessageMarkedDeleted);
                         logger.warning("RETR command - Message " + (msgIndex + 1) + infoMarkedDel);
                         return;
                     }
@@ -263,15 +266,15 @@ class ClientHandler implements Runnable {
                     logger.info("RETR command - Retrieving message " + (msgIndex + 1));
                     sendMessageContent(message);
                 } else {
-                    sendLine(errNoSuchMessage);
+                    sendError(errNoSuchMessage);
                     logger.warning("RETR command - No such message");
                 }
             } catch (NumberFormatException e) {
-                sendLine(errInvalidMessage);
+                sendError(errInvalidMessage);
                 logger.warning("RETR command - Invalid message number");
             }
         } else {
-            sendLine("-ERR Invalid command or not authenticated");
+            sendError(errInvalidCommandOrNotAuthenticated);
             logger.warning("RETR command - Invalid command or not authenticated.");
         }
     }
@@ -282,7 +285,7 @@ class ClientHandler implements Runnable {
                 int msgIndex = Integer.parseInt(commandParts[1]) - 1;
                 if (msgIndex >= 0 && msgIndex < database.messages.size()) {
                     if (deletedMessages.contains(msgIndex)) {
-                        sendLine("-ERR Message already marked as deleted");
+                        sendError("Message already marked as deleted");
                         logger.warning("DELE command - Message " + (msgIndex + 1) + " already marked as deleted");
                         return;
                     }
@@ -290,15 +293,15 @@ class ClientHandler implements Runnable {
                     sendLine("+OK Message " + (msgIndex + 1) + " marked for deletion");
                     logger.info("DELE command - Marked message " + (msgIndex + 1) + " for deletion");
                 } else {
-                    sendLine(errNoSuchMessage);
+                    sendError(errNoSuchMessage);
                     logger.warning("DELE command - No such message");
                 }
             } catch (NumberFormatException e) {
-                sendLine(errInvalidMessage);
+                sendError(errInvalidMessage);
                 logger.warning("DELE command - Invalid message number");
             }
         } else {
-            sendLine("-ERR Invalid command or not authenticated");
+            sendError(errInvalidCommandOrNotAuthenticated);
             logger.warning("DELE command - Invalid command or not authenticated.");
         }
     }
@@ -333,7 +336,7 @@ class ClientHandler implements Runnable {
     }
 
     private void handleUnknownCommand(String command) throws IOException {
-        sendLine("-ERR Unknown command");
+        sendError("Unknown command");
         logger.warning("Unknown command: " + command);
     }
 
@@ -354,7 +357,7 @@ class ClientHandler implements Runnable {
 
         private void handleTOP(String[] commandParts) throws IOException {
             if (!isValidCommand(commandParts)) {
-                sendError("Invalid command or not authenticated");
+                sendError(errInvalidCommandOrNotAuthenticated);
                 logger.warning("TOP command - Invalid command or not authenticated.");
                 return;
             }
@@ -371,13 +374,13 @@ class ClientHandler implements Runnable {
             }
 
             if (!isMessageIndexValid(msgIndex)) {
-                sendError("No such message");
+                sendError(errNoSuchMessage);
                 logger.warning("TOP command - No such message");
                 return;
             }
 
             if (isMessageDeleted(msgIndex)) {
-                sendError("Message marked as deleted");
+                sendError(errMessageMarkedDeleted);
                 logger.warning("TOP command - Message " + (msgIndex + 1) + infoMarkedDel);
                 return;
             }
