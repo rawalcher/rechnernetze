@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class POP3Client {
-    private final String server;
+    private final String server; // localhost
     private static final int port = 110;
     private final String username;
     private final String password;
