@@ -2,11 +2,11 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class MyHttpServer{
+public class MyHttpServer_3_4 {
     private final int tcpPort;
     private final File documentRoot;
 
-    public MyHttpServer(int tcpPort, String documentRoot){
+    public MyHttpServer_3_4(int tcpPort, String documentRoot){
         this.tcpPort = tcpPort;
         this.documentRoot = new File(documentRoot);
     }
@@ -64,6 +64,12 @@ public class MyHttpServer{
         return null;
     }
 
+    /**
+     * Sends the given file to the client by using Streams.
+     * (No StreamReader/Writer, because more than just texts should be sent correctly)
+     * @param file the File meant to be sent. Can be pictures or other file-types not only text
+     * @param client the Socket of the client to which the file should be sent to
+     */
     private void sendFileToClient(File file, Socket client) {
         try (BufferedOutputStream outToClient = new BufferedOutputStream(client.getOutputStream()); BufferedInputStream fileReader = new BufferedInputStream(new FileInputStream(file))) {
             byte[] buffer = new byte[10240]; // max 10KB per write
@@ -72,7 +78,6 @@ public class MyHttpServer{
                 outToClient.write(buffer, 0, bytesRead);
             }
             outToClient.flush();
-
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -91,7 +96,7 @@ public class MyHttpServer{
             System.err.println("Invalid port input");
             return;
         }
-        MyHttpServer server = new MyHttpServer(port, args[1]);
+        MyHttpServer_3_4 server = new MyHttpServer_3_4(port, args[1]);
         server.run();
             System.out.println("Finished!");
     }
