@@ -48,6 +48,24 @@ public class POP3Client {
         }
     }
 
+    public void disconnect() throws IOException {
+        // Close the reader if it's open
+        if (reader != null) {
+            reader.close();
+            reader = null;
+        }
+        // Close the writer if it's open
+        if (writer != null) {
+            writer.close();
+            writer = null;
+        }
+        // Close the socket if it's open
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
+            socket = null;
+        }
+    }
+
     public void handleCommand(String command) throws IOException {
         writer.println(command);
         String response = reader.readLine();
