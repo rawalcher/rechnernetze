@@ -1,0 +1,56 @@
+version 3
+run General-0-20241125-15:25:53-120511
+attr configname General
+attr datetime 20241125-15:25:53
+attr datetimef 20241125-152553
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network simpleNet
+attr processid 120511
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config network simpleNet
+config sim-time-limit 10s
+config **.client.intReq 1000
+config **.client.n 10
+config **.server.processingTime 1
+
+par simpleNet.client.gate$o.channel typename "\"Channel\""
+par simpleNet.client.gate$o.channel disabled false
+attr mutable ""
+par simpleNet.client.gate$o.channel delay 0.005s
+attr mutable ""
+attr unit s
+par simpleNet.client.gate$o.channel datarate 1e+07bps
+attr mutable ""
+attr unit bps
+par simpleNet.client.gate$o.channel ber 0
+attr mutable ""
+par simpleNet.client.gate$o.channel per 0
+attr mutable ""
+par simpleNet.server.gate$o.channel typename "\"Channel\""
+par simpleNet.server.gate$o.channel disabled false
+attr mutable ""
+par simpleNet.server.gate$o.channel delay 0.005s
+attr mutable ""
+attr unit s
+par simpleNet.server.gate$o.channel datarate 1e+07bps
+attr mutable ""
+attr unit bps
+par simpleNet.server.gate$o.channel ber 0
+attr mutable ""
+par simpleNet.server.gate$o.channel per 0
+attr mutable ""
+par simpleNet.client typename "\"Client\""
+par simpleNet.client n 10
+par simpleNet.client intReq 1000
+par simpleNet.server typename "\"Server\""
+par simpleNet typename "\"simpleNet\""
+

@@ -1,0 +1,93 @@
+version 3
+run HTTPNetwork-0-20250114-06:10:42-15320
+attr configname HTTPNetwork
+attr datetime 20250114-06:10:42
+attr datetimef 20250114-061042
+attr experiment HTTPNetwork
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network TCPNetwork
+attr processid 15320
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config network TCPNetwork
+config seed-set 0
+
+par TCPNetwork.client.outNet.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.client.outNet.channel disabled false
+attr mutable ""
+par TCPNetwork.client.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par TCPNetwork.server.outNet.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.server.outNet.channel disabled false
+attr mutable ""
+par TCPNetwork.server.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par TCPNetwork.client.clientHTTP.toLowerLayer.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.client.clientHTTP.toLowerLayer.channel disabled false
+attr mutable ""
+par TCPNetwork.client.clientHTTP.toLowerLayer.channel delay 0.01s
+attr mutable ""
+attr unit s
+par TCPNetwork.client.clientTCP.toLowerLayer.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.client.clientTCP.toLowerLayer.channel disabled false
+attr mutable ""
+par TCPNetwork.client.clientTCP.toLowerLayer.channel delay 0.1s
+attr mutable ""
+attr unit s
+par TCPNetwork.client.inNet.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.client.inNet.channel disabled false
+attr mutable ""
+par TCPNetwork.client.inNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par TCPNetwork.client.clientTCP.toUpperLayer.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.client.clientTCP.toUpperLayer.channel disabled false
+attr mutable ""
+par TCPNetwork.client.clientTCP.toUpperLayer.channel delay 0.01s
+attr mutable ""
+attr unit s
+par TCPNetwork.client.clientHTTP typename "\"aau_http.app.HTTPClient\""
+par TCPNetwork.client.clientTCP typename "\"aau_http.tcp.TCP\""
+par TCPNetwork.client.clientTCP headerlength 20
+par TCPNetwork.client.clientTCP packetLossProb 0.2
+par TCPNetwork.client typename "\"aau_http.simulations.Client\""
+par TCPNetwork.server.serverHTTP.toLowerLayer.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.server.serverHTTP.toLowerLayer.channel disabled false
+attr mutable ""
+par TCPNetwork.server.serverHTTP.toLowerLayer.channel delay 0.01s
+attr mutable ""
+attr unit s
+par TCPNetwork.server.serverTCP.toLowerLayer.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.server.serverTCP.toLowerLayer.channel disabled false
+attr mutable ""
+par TCPNetwork.server.serverTCP.toLowerLayer.channel delay 0.1s
+attr mutable ""
+attr unit s
+par TCPNetwork.server.inNet.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.server.inNet.channel disabled false
+attr mutable ""
+par TCPNetwork.server.inNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par TCPNetwork.server.serverTCP.toUpperLayer.channel typename "\"ned.DelayChannel\""
+par TCPNetwork.server.serverTCP.toUpperLayer.channel disabled false
+attr mutable ""
+par TCPNetwork.server.serverTCP.toUpperLayer.channel delay 0.1s
+attr mutable ""
+attr unit s
+par TCPNetwork.server.serverHTTP typename "\"aau_http.app.HTTPServer\""
+par TCPNetwork.server.serverTCP typename "\"aau_http.tcp.TCP\""
+par TCPNetwork.server.serverTCP headerlength 20
+par TCPNetwork.server.serverTCP packetLossProb 0.2
+par TCPNetwork.server typename "\"aau_http.simulations.Server\""
+par TCPNetwork typename "\"aau_http.simulations.TCPNetwork\""
+

@@ -1,0 +1,37 @@
+version 3
+run HTTPNetwork-0-20241126-09:23:42-26288
+attr configname HTTPNetwork
+attr datetime 20241126-09:23:42
+attr datetimef 20241126-092342
+attr experiment HTTPNetwork
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network HTTPNetwork
+attr processid 26288
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config network HTTPNetwork
+config seed-set 0
+
+par HTTPNetwork.client.toLowerLayer.channel typename "\"ned.DelayChannel\""
+par HTTPNetwork.client.toLowerLayer.channel disabled false
+attr mutable ""
+par HTTPNetwork.client.toLowerLayer.channel delay 0.1s
+attr mutable ""
+attr unit s
+par HTTPNetwork.server.toLowerLayer.channel typename "\"ned.DelayChannel\""
+par HTTPNetwork.server.toLowerLayer.channel disabled false
+attr mutable ""
+par HTTPNetwork.server.toLowerLayer.channel delay 0.1s
+attr mutable ""
+attr unit s
+par HTTPNetwork.client typename "\"aau_http.app.HTTPClient\""
+par HTTPNetwork.server typename "\"aau_http.app.HTTPServer\""
+par HTTPNetwork typename "\"aau_http.simulations.HTTPNetwork\""
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+cd `dirname $0`
+../src/aau_ip_routing_omnet6 -n .:../src $*
+# for shared lib, use: opp_run -l ../src/aau_ip_routing_omnet6 -n .:../src $*
