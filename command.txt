@@ -1,0 +1,1 @@
+./aau_IP_routing_omnet6 -f ../simulations/omnetpp.ini -n . -n ../simulations
