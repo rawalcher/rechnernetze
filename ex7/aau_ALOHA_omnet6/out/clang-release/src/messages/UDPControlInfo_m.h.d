@@ -1,5 +1,5 @@
-messages/UDPControlInfo_m.cc messages/UDPControlInfo_m.h : \
-	messages/UDPControlInfo.msg \
-	messages//controlInfoIP.msg
-messages/UDPControlInfo.msg:
-messages//controlInfoIP.msg:
+src/messages/UDPControlInfo_m.cc src/messages/UDPControlInfo_m.h : \
+	src/messages/UDPControlInfo.msg \
+	src/messages//controlInfoIP.msg
+src/messages/UDPControlInfo.msg:
+src/messages//controlInfoIP.msg:

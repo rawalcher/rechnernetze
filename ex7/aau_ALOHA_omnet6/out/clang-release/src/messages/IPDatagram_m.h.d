@@ -1,5 +1,5 @@
-messages/IPDatagram_m.cc messages/IPDatagram_m.h : \
-	messages/IPDatagram.msg \
-	messages//controlInfoIP.msg
-messages/IPDatagram.msg:
-messages//controlInfoIP.msg:
+src/messages/IPDatagram_m.cc src/messages/IPDatagram_m.h : \
+	src/messages/IPDatagram.msg \
+	src/messages//controlInfoIP.msg
+src/messages/IPDatagram.msg:
+src/messages//controlInfoIP.msg:

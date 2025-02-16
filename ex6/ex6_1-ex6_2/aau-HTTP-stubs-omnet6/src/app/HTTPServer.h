@@ -30,6 +30,8 @@ private:
     std::string index_html;
         std::string logo_gif;
         std::string TechnikErleben_png;
+    int srcPort = 80;
+    int destPort = 54321;
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);

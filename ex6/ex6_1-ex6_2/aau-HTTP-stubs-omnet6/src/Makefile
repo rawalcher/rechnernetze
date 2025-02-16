@@ -1,5 +1,5 @@
 #
-# OMNeT++/OMNEST Makefile for aau-HTTP
+# OMNeT++/OMNEST Makefile for aau-HTTP-stubs-omnet6
 #
 # This file was generated with the command:
 #  opp_makemake -f --deep
@@ -7,7 +7,7 @@
 
 # Name of target to be created (-o option)
 TARGET_DIR = .
-TARGET_NAME = aau-HTTP$(D)
+TARGET_NAME = aau-HTTP-stubs-omnet6$(D)
 TARGET = $(TARGET_NAME)$(EXE_SUFFIX)
 TARGET_IMPLIB = $(TARGET_NAME)$(IMPLIB_SUFFIX)
 TARGET_IMPDEF = $(TARGET_NAME)$(IMPDEF_SUFFIX)
@@ -41,18 +41,18 @@ OBJS = \
     $O/3rdParty/MACAddress.o \
     $O/app/HTTPClient.o \
     $O/app/HTTPServer.o \
+    $O/tcp/TCP.o \
     $O/app/HTTPClientMsg_m.o \
     $O/app/HTTPServerMsg_m.o \
-    $O/tcp/TCPSegment_m.o \
-    $O/tcp/TCP.o \
-    $O/tcp/TCPControlInfo_m.o
+    $O/tcp/TCPControlInfo_m.o \
+    $O/tcp/TCPSegment_m.o
 
 # Message files
 MSGFILES = \
     app/HTTPClientMsg.msg \
     app/HTTPServerMsg.msg \
-    tcp/TCPSegment.msg \
-    tcp/TCPControlInfo.msg
+    tcp/TCPControlInfo.msg \
+    tcp/TCPSegment.msg
 
 # SM files
 SMFILES =
@@ -91,8 +91,6 @@ endif
 
 #------------------------------------------------------------------------------
 # User-supplied makefile fragment(s)
--include makefrag
-
 #------------------------------------------------------------------------------
 
 # Main target
@@ -116,6 +114,7 @@ $O/$(TARGET): $(OBJS)  $(wildcard $(EXTRA_OBJS)) Makefile $(CONFIGFILE)
 
 # disabling all implicit rules
 .SUFFIXES :
+.PRECIOUS : %_m.h %_m.cc
 
 $O/%.o: %.cc $(COPTS_FILE) | msgheaders smheaders
 	@$(MKPATH) $(dir $@)

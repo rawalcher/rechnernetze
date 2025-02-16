@@ -17,7 +17,7 @@
 //
 // 621.800 (19W) Computer Networks and Network Programming
 
-package aau-HTTP-UDP.src.udp;
+package src.udp;
 
 simple UDP
 {

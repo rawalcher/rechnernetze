@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from messages/UDPControlInfo.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from src/messages/UDPControlInfo.msg.
 //
 
 #ifndef __UDPCONTROLINFO_M_H
@@ -24,7 +24,7 @@ class UDPControlInfo;
 #include "controlInfoIP_m.h" // import controlInfoIP
 
 /**
- * Class generated from <tt>messages/UDPControlInfo.msg:27</tt> by opp_msgtool.
+ * Class generated from <tt>src/messages/UDPControlInfo.msg:27</tt> by opp_msgtool.
  * <pre>
  * message UDPControlInfo extends controlInfoIP
  * {

@@ -1,5 +1,5 @@
-messages/IPControlInfo_m.cc messages/IPControlInfo_m.h : \
-	messages/IPControlInfo.msg \
-	messages//controlInfoIP.msg
-messages/IPControlInfo.msg:
-messages//controlInfoIP.msg:
+src/messages/IPControlInfo_m.cc src/messages/IPControlInfo_m.h : \
+	src/messages/IPControlInfo.msg \
+	src/messages//controlInfoIP.msg
+src/messages/IPControlInfo.msg:
+src/messages//controlInfoIP.msg:

@@ -24,10 +24,6 @@
 
 Define_Module(HTTPServer);
 
-
-int srcPort = 80;
-int destPort = 54321;
-
 void HTTPServer::initialize()
 {
     index_html = "<html>\n\t<head><title>Demo Web Site 2019</title></head>\n\t<body>\n\t\t<img src=\"logo.gif\"/>\n\t\t<h1>Welcome</h1>\n\t\t<img src=\"TechnikErleben.png\"/>\n\t</body>\n</html>\n";

@@ -26,6 +26,9 @@ using namespace omnetpp;
 
 class HTTPClient : public cSimpleModule
 {
+private:
+    int srcPort = 54321;
+    int destPort = 80;
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);

@@ -30,10 +30,10 @@ Define_Module(HTTPClient);
         std::string request3;
 cMessage *timeoutEvent = nullptr;
 int count;
-int srcPort = 54321;
-int destPort = 80;
+
 
 void HTTPClient::initialize() {
+
     request1="/demo/\r\n";
     request2="/demo/logo.gif\r\n";
     request3="/demo/TechnikErleben.png\r\n";

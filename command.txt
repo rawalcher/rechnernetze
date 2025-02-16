@@ -1,8 +1,18 @@
 
 
 
-./aau_IP_routing_omnet6 -f ../simulations/omnetpp.ini -n . -n ../simulations
+ex5_2
+./aau-HTTP-UDP -f ../networks/omnetpp.ini -n . -n ../networks
 
+ex5_4
+./aau-HTTP -f ../simulation/omnetpp.ini -n . -n ../simulation
+
+
+ex6_1-ex6_2
+./aau-HTTP-stubs-omnet6 -f ../simulations/omnetpp.ini -n . -n ../simulations
+
+ex6_6-ex6_7
+./aau_IP_routing_omnet6 -f ../simulations/omnetpp.ini -n . -n ../simulations
 
 ex7
 ./aau_ALOHA_omnet6 -f ../simulations/omnetpp.ini -n . -n ../simulations

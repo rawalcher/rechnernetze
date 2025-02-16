@@ -1,16 +1,16 @@
 version 3
-run HTTPNetwork-0-20241209-18:29:00-10232
+run HTTPNetwork-0-20250216-17:51:23-98515
 attr configname HTTPNetwork
-attr datetime 20241209-18:29:00
-attr datetimef 20241209-182900
+attr datetime 20250216-17:51:23
+attr datetimef 20250216-175123
 attr experiment HTTPNetwork
-attr inifile omnetpp.ini
+attr inifile ../networks/omnetpp.ini
 attr iterationvars ""
 attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network HTTPNetwork
-attr processid 10232
+attr processid 98515
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -36,12 +36,12 @@ par HTTPNetwork.client.httpClient typename "\"src.app.HTTPClient\""
 par HTTPNetwork.client.httpClient srcPort 6666
 par HTTPNetwork.client.httpClient destPort 80
 par HTTPNetwork.client.udp typename "\"src.udp.UDP\""
-par HTTPNetwork.client typename "\"networks.ClientHost\""
+par HTTPNetwork.client typename "\"ClientHost\""
 par HTTPNetwork.server.httpServer typename "\"src.app.HTTPServer\""
 par HTTPNetwork.server.httpServer srcPort 80
 par HTTPNetwork.server.httpServer destPort 66666
 par HTTPNetwork.server.httpServer documentRoot "\"documentRoot\""
 par HTTPNetwork.server.udp typename "\"src.udp.UDP\""
-par HTTPNetwork.server typename "\"networks.ServerHost\""
-par HTTPNetwork typename "\"networks.HTTPNetwork\""
+par HTTPNetwork.server typename "\"ServerHost\""
+par HTTPNetwork typename "\"HTTPNetwork\""
 

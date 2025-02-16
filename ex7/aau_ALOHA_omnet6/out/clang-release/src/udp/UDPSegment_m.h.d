@@ -1,3 +1,3 @@
-udp/UDPSegment_m.cc udp/UDPSegment_m.h : \
-	udp/UDPSegment.msg
-udp/UDPSegment.msg:
+src/udp/UDPSegment_m.cc src/udp/UDPSegment_m.h : \
+	src/udp/UDPSegment.msg
+src/udp/UDPSegment.msg:

@@ -23,37 +23,60 @@ Define_Module(Aloha);
 
 void Aloha::initialize() {
     frameBuf = nullptr;
-    maxWaitTime = 0.8;  // Get parameter from NED
+    maxWaitTime = par("maxWaitTime").doubleValue();
 }
 
 void Aloha::handleMessage(cMessage *msg) {
     if (msg->isSelfMessage()) {
-        // Backoff timer expired → retransmit
-        sendCopyOf(frameBuf, 0);
-        delete msg;
-    }
-    else if (msg->arrivedOn("inUpperLayer")) {
-        // New packet from app layer
-        if (frameBuf == nullptr) {  // Not busy? Send immediately
-            frameBuf = msg;
+        if (frameBuf != nullptr) {
             sendCopyOf(frameBuf, 0);
         }
-        else {  // Busy → drop new packet (no queuing)
+        delete msg;
+        return;
+    }
+
+    if (msg->arrivedOn("inUpperLayer")) {
+        if (frameBuf == nullptr) {
+            frameBuf = msg;
+            sendCopyOf(frameBuf, 0);
+        } else {
+            EV << "Already transmitting a frame; dropping new packet.\n";
             delete msg;
-            EV << "Dropping new packet (already transmitting)\n";
+        }
+        return;
+    }
+
+
+    if (strcmp(msg->getName(), "COL") == 0) {
+        delete msg;
+        if (frameBuf != nullptr) {
+            scheduleAt(simTime() + uniform(0.2, maxWaitTime), new cMessage("backoff"));
         }
     }
     else {
-        // Collision detected (message from lower layer)
-        delete msg;  // Discard collision notification
-        if (frameBuf != nullptr) {
-            // Schedule retransmission after random backoff
-            scheduleAt(simTime() + uniform(0, maxWaitTime), new cMessage("backoff"));
+        std::string src  = msg->par("src").stdstringValue();
+        std::string dest = msg->par("dest").stdstringValue();
+        std::string myName = getName();
+
+        if (src == myName) {
+            EV << "Frame successfully transmitted.\n";
+            if (frameBuf != nullptr) {
+                delete frameBuf;
+                frameBuf = nullptr;
+            }
+            delete msg;
+        }
+        else if (dest == myName) {
+            EV << "Frame received for this host; delivering to upper layer.\n";
+            send(msg, "outUpperLayer");
+        }
+        else {
+            delete msg;
         }
     }
 }
 
 void Aloha::sendCopyOf(cMessage *msg, double delay) {
     cMessage *copy = msg->dup();
-    sendDelayed(copy, delay, "outLowerLayer");
+    sendDelayed(copy, simTime() + delay, "outLowerLayer");
 }

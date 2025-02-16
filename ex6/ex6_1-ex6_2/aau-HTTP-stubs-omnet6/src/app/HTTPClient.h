@@ -30,6 +30,9 @@ protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual void sendMessage(const std::string &input, int c);
+private:
+    int srcPort = 54321;
+    int destPort = 80;
 };
 
 #endif

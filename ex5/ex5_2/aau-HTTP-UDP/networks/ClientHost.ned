@@ -17,8 +17,6 @@
 //
 // 621.800 (19W) Computer Networks and Network Programming
 
-package aau-HTTP-UDP.networks;
-
 import src.app.HTTPClient;
 import src.udp.UDP;
 

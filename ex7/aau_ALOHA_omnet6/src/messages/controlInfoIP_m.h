@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from messages/controlInfoIP.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from src/messages/controlInfoIP.msg.
 //
 
 #ifndef __CONTROLINFOIP_M_H
@@ -22,7 +22,7 @@ class controlInfoIP;
 // }}
 
 /**
- * Class generated from <tt>messages/controlInfoIP.msg:25</tt> by opp_msgtool.
+ * Class generated from <tt>src/messages/controlInfoIP.msg:25</tt> by opp_msgtool.
  * <pre>
  * packet controlInfoIP
  * {

@@ -17,7 +17,7 @@
 //
 // 621.800 (19W) Computer Networks and Network Programming
 
-package aau-HTTP-UDP.src.app;
+package src.app;
 
 simple HTTPClient
 {
