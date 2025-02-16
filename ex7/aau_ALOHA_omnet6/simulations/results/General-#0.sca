@@ -1,0 +1,127 @@
+version 3
+run General-0-20250216-15:15:42-2502
+attr configname General
+attr datetime 20250216-15:15:42
+attr datetimef 20250216-151542
+attr experiment General
+attr inifile ../simulations/omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network networks.AlohaNetwork
+attr processid 2502
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config network networks.AlohaNetwork
+config AlohaNetwork.client1.receiverMac "\"00-08-74-4C-7F-3B\""
+config AlohaNetwork.client2.receiverMac "\"00-08-74-4C-7F-4B\""
+config AlohaNetwork.server1.receiverMac "\"00-08-74-4C-7F-1B\""
+config AlohaNetwork.server2.receiverMac "\"00-08-74-4C-7F-2B\""
+
+par AlohaNetwork.client1.outNet.channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.client1.outNet.channel disabled false
+attr mutable ""
+par AlohaNetwork.client1.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.link.outLink[0].channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.link.outLink[0].channel disabled false
+attr mutable ""
+par AlohaNetwork.link.outLink[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.client2.outNet.channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.client2.outNet.channel disabled false
+attr mutable ""
+par AlohaNetwork.client2.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.link.outLink[1].channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.link.outLink[1].channel disabled false
+attr mutable ""
+par AlohaNetwork.link.outLink[1].channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.server1.outNet.channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.server1.outNet.channel disabled false
+attr mutable ""
+par AlohaNetwork.server1.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.link.outLink[2].channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.link.outLink[2].channel disabled false
+attr mutable ""
+par AlohaNetwork.link.outLink[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.server2.outNet.channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.server2.outNet.channel disabled false
+attr mutable ""
+par AlohaNetwork.server2.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.link.outLink[3].channel typename "\"networks.interHostChannel\""
+par AlohaNetwork.link.outLink[3].channel disabled false
+attr mutable ""
+par AlohaNetwork.link.outLink[3].channel delay 0.1s
+attr mutable ""
+attr unit s
+par AlohaNetwork.client1.application typename "\"src.app.App\""
+par AlohaNetwork.client1.application appType "\"client\""
+par AlohaNetwork.client1.udp typename "\"src.udp.UDP\""
+par AlohaNetwork.client1.ip typename "\"src.ip.IP\""
+par AlohaNetwork.client1.aloha typename "\"src.aloha.Aloha\""
+par AlohaNetwork.client1.aloha macAddress "\"00-08-74-4C-7F-1B\""
+par AlohaNetwork.client1 typename "\"networks.Host\""
+par AlohaNetwork.client1 clientIP "\"192.168.1.1\""
+par AlohaNetwork.client1 clientPort 23456
+par AlohaNetwork.client1 serverIP "\"192.168.3.3\""
+par AlohaNetwork.client1 receiverMac "\"00-08-74-4C-7F-3B\""
+par AlohaNetwork.client1 macAddress "\"00-08-74-4C-7F-1B\""
+par AlohaNetwork.client1 serverPort 23456
+par AlohaNetwork.client2.application typename "\"src.app.App\""
+par AlohaNetwork.client2.application appType "\"client\""
+par AlohaNetwork.client2.udp typename "\"src.udp.UDP\""
+par AlohaNetwork.client2.ip typename "\"src.ip.IP\""
+par AlohaNetwork.client2.aloha typename "\"src.aloha.Aloha\""
+par AlohaNetwork.client2.aloha macAddress "\"00-08-74-4C-7F-2B\""
+par AlohaNetwork.client2 typename "\"networks.Host\""
+par AlohaNetwork.client2 clientIP "\"192.168.2.2\""
+par AlohaNetwork.client2 clientPort 23456
+par AlohaNetwork.client2 serverIP "\"192.168.3.3\""
+par AlohaNetwork.client2 receiverMac "\"00-08-74-4C-7F-4B\""
+par AlohaNetwork.client2 macAddress "\"00-08-74-4C-7F-2B\""
+par AlohaNetwork.client2 serverPort 23456
+par AlohaNetwork.server1.application typename "\"src.app.App\""
+par AlohaNetwork.server1.application appType "\"server\""
+par AlohaNetwork.server1.udp typename "\"src.udp.UDP\""
+par AlohaNetwork.server1.ip typename "\"src.ip.IP\""
+par AlohaNetwork.server1.aloha typename "\"src.aloha.Aloha\""
+par AlohaNetwork.server1.aloha macAddress "\"00-08-74-4C-7F-3B\""
+par AlohaNetwork.server1 typename "\"networks.Host\""
+par AlohaNetwork.server1 clientIP "\"192.168.3.3\""
+par AlohaNetwork.server1 clientPort 23456
+par AlohaNetwork.server1 serverIP "\"192.168.3.3\""
+par AlohaNetwork.server1 receiverMac "\"00-08-74-4C-7F-1B\""
+par AlohaNetwork.server1 macAddress "\"00-08-74-4C-7F-3B\""
+par AlohaNetwork.server1 serverPort 23456
+par AlohaNetwork.server2.application typename "\"src.app.App\""
+par AlohaNetwork.server2.application appType "\"server\""
+par AlohaNetwork.server2.udp typename "\"src.udp.UDP\""
+par AlohaNetwork.server2.ip typename "\"src.ip.IP\""
+par AlohaNetwork.server2.aloha typename "\"src.aloha.Aloha\""
+par AlohaNetwork.server2.aloha macAddress "\"00-08-74-4C-7F-4B\""
+par AlohaNetwork.server2 typename "\"networks.Host\""
+par AlohaNetwork.server2 clientIP "\"192.168.3.4\""
+par AlohaNetwork.server2 clientPort 23456
+par AlohaNetwork.server2 serverIP "\"192.168.3.4\""
+par AlohaNetwork.server2 receiverMac "\"00-08-74-4C-7F-2B\""
+par AlohaNetwork.server2 macAddress "\"00-08-74-4C-7F-4B\""
+par AlohaNetwork.server2 serverPort 23456
+par AlohaNetwork.link typename "\"src.aloha.AlohaCable\""
+par AlohaNetwork typename "\"networks.AlohaNetwork\""
+
