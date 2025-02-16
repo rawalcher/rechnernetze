@@ -1,5 +1,5 @@
 ../out/clang-release/src/app/App.o: app/App.cc app/App.h \
-  /opt/omnetpp/include/omnetpp.h app/AppMessage_m.h \
+  /home/user/omnetpp-6.1/include/omnetpp.h app/AppMessage_m.h \
   app/../messages/UDPControlInfo_m.h app/../messages/controlInfoIP_m.h \
   app/../messages/../3rdParty/IPv4Address.h \
   app/../messages/../3rdParty/INETDefs.h \
@@ -10,7 +10,7 @@
   app/../messages/../3rdParty/Compat.h \
   app/../messages/../3rdParty/InitStages.h app/../3rdParty/IPv4Address.h
 app/App.h:
-/opt/omnetpp/include/omnetpp.h:
+/home/user/omnetpp-6.1/include/omnetpp.h:
 app/AppMessage_m.h:
 app/../messages/UDPControlInfo_m.h:
 app/../messages/controlInfoIP_m.h:
