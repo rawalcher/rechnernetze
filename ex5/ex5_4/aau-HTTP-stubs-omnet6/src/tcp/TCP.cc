@@ -101,6 +101,7 @@ void TCP::handleAppMessage(cPacket *msg) {
 
             seq=seq+1;
             status=3;
+            // TODO: duplicate bc, we just set a nullpointer afterwards. send(segment) sets it to null
             lastMsg = segment;
             // save HTTP Message which needs to be transfered
             httpClientMsg->removeControlInfo();
