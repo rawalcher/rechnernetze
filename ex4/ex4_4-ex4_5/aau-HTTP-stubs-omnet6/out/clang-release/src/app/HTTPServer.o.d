@@ -1,12 +1,7 @@
 ../out/clang-release/src/app/HTTPServer.o: app/HTTPServer.cc \
-  app/HTTPServer.h \
-  C:/Privat/_Studium/BSC_5/Rechnernetze/omnetpp-6.1/include/omnetpp.h \
+  app/HTTPServer.h /home/user/omnetpp-6.1/include/omnetpp.h \
   app/HTTPClientMsg_m.h app/HTTPServerMsg_m.h
-
 app/HTTPServer.h:
-
-C:/Privat/_Studium/BSC_5/Rechnernetze/omnetpp-6.1/include/omnetpp.h:
-
+/home/user/omnetpp-6.1/include/omnetpp.h:
 app/HTTPClientMsg_m.h:
-
 app/HTTPServerMsg_m.h:

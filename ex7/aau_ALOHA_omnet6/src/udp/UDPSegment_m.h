@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from src/udp/UDPSegment.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from udp/UDPSegment.msg.
 //
 
 #ifndef __UDPSEGMENT_M_H
@@ -18,7 +18,7 @@
 
 class UDPSegment;
 /**
- * Class generated from <tt>src/udp/UDPSegment.msg:21</tt> by opp_msgtool.
+ * Class generated from <tt>udp/UDPSegment.msg:21</tt> by opp_msgtool.
  * <pre>
  * packet UDPSegment
  * {

@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from src/messages/IPControlInfo.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from messages/IPControlInfo.msg.
 //
 
 #ifndef __IPCONTROLINFO_M_H
@@ -24,7 +24,7 @@ class IPControlInfo;
 #include "controlInfoIP_m.h" // import controlInfoIP
 
 /**
- * Enum generated from <tt>src/messages/IPControlInfo.msg:27</tt> by opp_msgtool.
+ * Enum generated from <tt>messages/IPControlInfo.msg:27</tt> by opp_msgtool.
  * <pre>
  * enum ProtocolTypes
  * {
@@ -44,7 +44,7 @@ inline void doParsimPacking(omnetpp::cCommBuffer *b, const ProtocolTypes& e) { b
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, ProtocolTypes& e) { int n; b->unpack(n); e = static_cast<ProtocolTypes>(n); }
 
 /**
- * Class generated from <tt>src/messages/IPControlInfo.msg:36</tt> by opp_msgtool.
+ * Class generated from <tt>messages/IPControlInfo.msg:36</tt> by opp_msgtool.
  * <pre>
  * packet IPControlInfo extends controlInfoIP
  * {

@@ -1,12 +1,13 @@
 
 
+ex4_4
+./aau-HTTP -f ../simulations/omnetpp.ini -n . -n ../simulations
 
 ex5_2
 ./aau-HTTP-UDP -f ../networks/omnetpp.ini -n . -n ../networks
 
 ex5_4
-./aau-HTTP -f ../simulation/omnetpp.ini -n . -n ../simulation
-
+./aau-HTTP -f ../simulations/omnetpp.ini -n . -n ../simulations
 
 ex6_1-ex6_2
 ./aau-HTTP-stubs-omnet6 -f ../simulations/omnetpp.ini -n . -n ../simulations

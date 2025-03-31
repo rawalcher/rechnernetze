@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from src/messages/IPDatagram.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from messages/IPDatagram.msg.
 //
 
 #ifndef __IPDATAGRAM_M_H
@@ -24,7 +24,7 @@ class IPDatagram;
 #include "controlInfoIP_m.h" // import controlInfoIP
 
 /**
- * Class generated from <tt>src/messages/IPDatagram.msg:29</tt> by opp_msgtool.
+ * Class generated from <tt>messages/IPDatagram.msg:29</tt> by opp_msgtool.
  * <pre>
  * packet IPDatagram extends controlInfoIP
  * {

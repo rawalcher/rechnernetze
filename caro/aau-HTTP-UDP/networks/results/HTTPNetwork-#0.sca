@@ -1,0 +1,57 @@
+version 3
+run HTTPNetwork-0-20250331-19:33:08-20822
+attr configname HTTPNetwork
+attr datetime 20250331-19:33:08
+attr datetimef 20250331-193308
+attr experiment HTTPNetwork
+attr inifile ../networks/omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network HTTPNetwork
+attr processid 20822
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config network HTTPNetwork
+config **.server.documentRoot "\"documentRoot\""
+config seed-set 0
+
+par HTTPNetwork.client.outNet.channel typename "\"ned.DelayChannel\""
+par HTTPNetwork.client.outNet.channel disabled false
+attr mutable ""
+par HTTPNetwork.client.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par HTTPNetwork.server.outNet.channel typename "\"ned.DelayChannel\""
+par HTTPNetwork.server.outNet.channel disabled false
+attr mutable ""
+par HTTPNetwork.server.outNet.channel delay 0.1s
+attr mutable ""
+attr unit s
+par HTTPNetwork.client.httpClient typename "\"src.app.HTTPClient\""
+par HTTPNetwork.client.httpClient srcPort 6666
+par HTTPNetwork.client.httpClient destPort 80
+par HTTPNetwork.client.udp typename "\"src.udp.UDP\""
+par HTTPNetwork.client.udp gateSize 1
+par HTTPNetwork.client typename "\"ClientHost\""
+par HTTPNetwork.server.httpServer1 typename "\"src.app.HTTPServer\""
+par HTTPNetwork.server.httpServer1 srcPort 80
+par HTTPNetwork.server.httpServer1 destPort 6666
+par HTTPNetwork.server.httpServer1 documentRoot "\"documentRoot\""
+par HTTPNetwork.server.httpServer2 typename "\"src.app.HTTPServer\""
+par HTTPNetwork.server.httpServer2 srcPort 80
+par HTTPNetwork.server.httpServer2 destPort 6666
+par HTTPNetwork.server.httpServer2 documentRoot "\"documentRoot\""
+par HTTPNetwork.server.httpServer3 typename "\"src.app.HTTPServer\""
+par HTTPNetwork.server.httpServer3 srcPort 80
+par HTTPNetwork.server.httpServer3 destPort 6666
+par HTTPNetwork.server.httpServer3 documentRoot "\"documentRoot\""
+par HTTPNetwork.server.udp typename "\"src.udp.UDP\""
+par HTTPNetwork.server.udp gateSize 3
+par HTTPNetwork.server typename "\"ServerHost\""
+par HTTPNetwork typename "\"HTTPNetwork\""
+

@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from src/app/AppMessage.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from app/AppMessage.msg.
 //
 
 #ifndef __APPMESSAGE_M_H
@@ -18,7 +18,7 @@
 
 class AppMessage;
 /**
- * Class generated from <tt>src/app/AppMessage.msg:20</tt> by opp_msgtool.
+ * Class generated from <tt>app/AppMessage.msg:20</tt> by opp_msgtool.
  * <pre>
  * packet AppMessage
  * {

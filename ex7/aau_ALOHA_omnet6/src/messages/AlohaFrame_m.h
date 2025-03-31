@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from src/messages/AlohaFrame.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from messages/AlohaFrame.msg.
 //
 
 #ifndef __ALOHAFRAME_M_H
@@ -24,7 +24,7 @@ class AlohaFrame;
 #include "AlohaControlInfo_m.h" // import AlohaControlInfo
 
 /**
- * Class generated from <tt>src/messages/AlohaFrame.msg:27</tt> by opp_msgtool.
+ * Class generated from <tt>messages/AlohaFrame.msg:27</tt> by opp_msgtool.
  * <pre>
  * packet AlohaFrame extends AlohaControlInfo
  * {

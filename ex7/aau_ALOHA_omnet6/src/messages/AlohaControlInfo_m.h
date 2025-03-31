@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by opp_msgtool 6.1 from src/messages/AlohaControlInfo.msg.
+// Generated file, do not edit! Created by opp_msgtool 6.1 from messages/AlohaControlInfo.msg.
 //
 
 #ifndef __ALOHACONTROLINFO_M_H
@@ -22,7 +22,7 @@ class AlohaControlInfo;
 // }}
 
 /**
- * Class generated from <tt>src/messages/AlohaControlInfo.msg:31</tt> by opp_msgtool.
+ * Class generated from <tt>messages/AlohaControlInfo.msg:31</tt> by opp_msgtool.
  * <pre>
  * packet AlohaControlInfo
  * {
