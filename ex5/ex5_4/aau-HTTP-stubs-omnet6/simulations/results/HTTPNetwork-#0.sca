@@ -1,16 +1,16 @@
 version 3
-run HTTPNetwork-0-20250126-21:14:03-23812
+run HTTPNetwork-0-20250217-11:32:12-6244
 attr configname HTTPNetwork
-attr datetime 20250126-21:14:03
-attr datetimef 20250126-211403
+attr datetime 20250217-11:32:12
+attr datetimef 20250217-113212
 attr experiment HTTPNetwork
-attr inifile omnetpp.ini
+attr inifile ../simulations/omnetpp.ini
 attr iterationvars ""
 attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network TCPNetwork
-attr processid 23812
+attr processid 6244
 attr repetition 0
 attr replication #0
 attr resultdir results

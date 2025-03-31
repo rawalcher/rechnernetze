@@ -1,4 +1,6 @@
 
+ex4_2
+./simpleRequestResponse -f ./omnetpp.ini -n . -n .
 
 ex4_4
 ./aau-HTTP -f ../simulations/omnetpp.ini -n . -n ../simulations

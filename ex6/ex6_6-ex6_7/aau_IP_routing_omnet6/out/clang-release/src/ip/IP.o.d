@@ -1,5 +1,5 @@
 ../out/clang-release/src/ip/IP.o: ip/IP.cc ip/IP.h \
-  /home/user/omnetpp-6.1/include/omnetpp.h ip/../3rdParty/IPv4Address.h \
+  /opt/omnetpp/include/omnetpp.h ip/../3rdParty/IPv4Address.h \
   ip/../3rdParty/INETDefs.h ip/../3rdParty/precompiled_release.h \
   ip/../3rdParty/precompiled.h ip/../3rdParty/opp_defines.h \
   ip/../3rdParty/features.h ip/../3rdParty/Compat.h \
@@ -8,7 +8,7 @@
   ip/../messages/../3rdParty/IPv4Address.h \
   ip/../messages/IPControlInfo_m.h
 ip/IP.h:
-/home/user/omnetpp-6.1/include/omnetpp.h:
+/opt/omnetpp/include/omnetpp.h:
 ip/../3rdParty/IPv4Address.h:
 ip/../3rdParty/INETDefs.h:
 ip/../3rdParty/precompiled_release.h:
