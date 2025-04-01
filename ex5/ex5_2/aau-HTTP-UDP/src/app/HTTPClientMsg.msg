@@ -19,5 +19,5 @@
 
 packet HTTPClientMsg {
     string method;
-    string ressource;
+    string resource;
 }

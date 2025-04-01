@@ -17,27 +17,27 @@
 //
 // 621.800 (19W) Computer Networks and Network Programming
 
-#ifndef __AAU_HTTP_HTTPCLIENT_H_
-#define __AAU_HTTP_HTTPCLIENT_H_
+#ifndef __HTTPCLIENT_H__
+#define __HTTPCLIENT_H__
 
 #include <omnetpp.h>
+#include <string>
 #include "../3rdParty/IPv4Address.h"
-#include "../3rdParty/IPv6Address.h"
 
 using namespace omnetpp;
 
 class HTTPClient : public cSimpleModule
 {
+private:
+    int clientPort;
+    inet::IPv4Address clientIP;
+    inet::IPv4Address serverIP;
+    int currentPort = 80; // Start with port 80
+
 protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
-    virtual void sendRequest(const char *resource, int destinationPort);
-    inet::IPv4Address *serverIPv4;
-    inet::IPv4Address *clientIPv4;
-    inet::IPv6Address *serverIPv6;
-    inet::IPv6Address *clientIPv6;
-    int srcPort;
-    int destPort;
+    virtual void initialize() override;
+    virtual void handleMessage(cMessage *msg) override;
+    void sendRequest(const char *resource, int destinationPort);
 };
 
 #endif

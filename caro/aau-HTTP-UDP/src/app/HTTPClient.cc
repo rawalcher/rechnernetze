@@ -16,65 +16,93 @@
 //          christian.timmerer@itec.aau.at / christian.timmerer@bitmovin.com
 //
 // 621.800 (19W) Computer Networks and Network Programming
+//
+// HTTPClient Implementation for Multi-Port Requests
+//
+
+#include <string>
+#include <omnetpp.h>
 
 #include "HTTPClient.h"
 #include "HTTPClientMsg_m.h"
 #include "HTTPServerMsg_m.h"
 #include "../udp/UDPControlInfo_m.h"
+#include "../3rdParty/IPv4Address.h"
 
 Define_Module(HTTPClient);
 
 void HTTPClient::initialize() {
-    srcPort = par("srcPort").intValue();
+    clientPort = par("clientPort").intValue(); // Usually 6666
 
-    EV << "HTTPClient initialized on port " << srcPort << ". Waiting to send the first request.\n";
+    // Initialize IP addresses
+    clientIP = inet::IPv4Address("192.168.1.2"); // Client IP
+    serverIP = inet::IPv4Address("192.168.1.1"); // Server IP
 
+    EV << "HTTPClient initialized on port " << clientPort << ". Waiting to send the first request." << endl;
+
+    // Schedule the first request
     cMessage *startMsg = new cMessage("startRequest");
     scheduleAt(simTime(), startMsg);
 }
 
 void HTTPClient::handleMessage(cMessage *msg) {
-    if (msg->isSelfMessage() && strcmp(msg->getName(), "startRequest") == 0) {
-        sendRequest("/index.html",0);
-        EV << "First request sent: Method=GET, Resource=/index.html\n";
-        delete msg;
-    } else {
-        HTTPServerMsg *serverMsg = dynamic_cast<HTTPServerMsg *>(msg);
-        if (serverMsg) {
-            EV << "HTTPClient received response from server:\n";
-            EV << "-------------------\n";
-            EV << serverMsg->getResponse() << "\n";
-            EV << "-------------------\n";
-            if (strstr(serverMsg->getResponse(), "<html>") != nullptr) {
-                sendRequest("/images/logo.gif",1);
-                sendRequest("/images/TechnikErleben.png",2);
-            }
-            delete serverMsg;
-        } else {
-            EV << "HTTPClient received an unknown message type. Discarding.\n";
-            delete msg;
+    // Check if this is our trigger to start sending requests
+    if (msg->isSelfMessage()) {
+        // Send request to the current port
+        sendRequest("/index.html", currentPort);
+
+        // Schedule next request to a different port
+        if (currentPort == 80) {
+            currentPort = 81;
+            cMessage *nextMsg = new cMessage("startRequest");
+            scheduleAt(simTime() + 1.0, nextMsg);
         }
+        else if (currentPort == 81) {
+            currentPort = 82;
+            cMessage *nextMsg = new cMessage("startRequest");
+            scheduleAt(simTime() + 1.0, nextMsg);
+        }
+
+        delete msg;
+    }
+    // Handle server response
+    else if (dynamic_cast<HTTPServerMsg*>(msg) != nullptr) {
+        HTTPServerMsg *response = check_and_cast<HTTPServerMsg*>(msg);
+
+        // Get source port from control info
+        UDPControlInfo *controlInfo = check_and_cast<UDPControlInfo*>(response->getControlInfo());
+        int srcPort = controlInfo->getSrcPort();
+
+        // Log the response
+        EV << "HTTPClient received response from server (port " << srcPort << "):" << endl;
+        EV << "-------------------" << endl;
+        EV << response->getResponse() << endl;
+        EV << "-------------------" << endl;
+
+        delete msg;
+    }
+    else {
+        // Unknown message type
+        EV << "Received unknown message type. Discarding." << endl;
+        delete msg;
     }
 }
 
-void HTTPClient::sendRequest(const char *ressource, int destinationport) {
+void HTTPClient::sendRequest(const char *resource, int destinationPort) {
     HTTPClientMsg *msg = new HTTPClientMsg();
     msg->setMethod("GET");
-    msg->setRessource(ressource);
+    msg->setResource(resource);
 
     UDPControlInfo *controlInfo = new UDPControlInfo();
-    controlInfo->setSrcPort(srcPort);
-    controlInfo->setDestPort(destinationport);
+    controlInfo->setSrcPort(clientPort);
+    controlInfo->setDestPort(destinationPort);
 
     // Add IP addresses
-    inet::IPv4Address srcIP("192.168.1.2");  // Client IP (dummy)
-    inet::IPv4Address destIP("192.168.1.1"); // Server IP (dummy)
-    controlInfo->setSrcIPv4(srcIP);
-    controlInfo->setDestIPv4(destIP);
+    controlInfo->setSrcIPv4(clientIP);
+    controlInfo->setDestIPv4(serverIP);
 
     msg->setControlInfo(controlInfo);
 
     send(msg, "toLowerLayer");
-    EV << "Request sent: Method=GET, Resource=" << msg->getRessource() << "\n";
+    EV << "Request sent: Method=GET, Resource=" << msg->getResource() << ", DestPort=" << destinationPort << endl;
 }
-

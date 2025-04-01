@@ -58,10 +58,10 @@ void HTTPClient::handleMessage(cMessage *msg) {
     }
 }
 
-void HTTPClient::sendRequest(const char *ressource) {
+void HTTPClient::sendRequest(const char *resource) {
     HTTPClientMsg *msg = new HTTPClientMsg();
     msg->setMethod("GET");
-    msg->setRessource(ressource);
+    msg->setResource(resource);
 
     UDPControlInfo *controlInfo = new UDPControlInfo();
     controlInfo->setSrcIPv4(inet::IPv4Address("192.168.1.1"));
@@ -71,6 +71,6 @@ void HTTPClient::sendRequest(const char *ressource) {
     msg->setControlInfo(controlInfo);
 
     send(msg, "toLowerLayer");
-    EV << "Request sent: Method=GET, Resource=" << msg->getRessource() << "\n";
+    EV << "Request sent: Method=GET, Resource=" << msg->getResource() << "\n";
 }
 

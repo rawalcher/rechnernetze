@@ -31,25 +31,26 @@ Define_Module(HTTPServer);
 
 void HTTPServer::initialize() {
     documentRoot = par("documentRoot").stdstringValue();
+    srcPort = par("srcPort").intValue();
+    destPort = par("destPort").intValue();
 
     // Ensure document root ends with a slash
     if (!documentRoot.empty() && documentRoot.back() != '/') {
         documentRoot += '/';
     }
 
-    srcPort = par("srcPort").intValue();
-    destPort = par("destPort").intValue();
-    EV << "HTTPServer initialized at port " << srcPort << "\n";
-    EV << "Document root set to: " << documentRoot << "\n";
-    EV << "Parent is " << this->getParentModule()->getFullName() << "\n";
+    EV << "HTTPServer initialized at port " << srcPort << endl;
+    EV << "Document root set to: " << documentRoot << endl;
 }
 
 void HTTPServer::handleMessage(cMessage *msg) {
     HTTPClientMsg *clientMsg = check_and_cast<HTTPClientMsg *>(msg);
+
     if (clientMsg) {
+
         UDPControlInfo *controlInfo = check_and_cast<UDPControlInfo *>(clientMsg->getControlInfo());
         std::string method = clientMsg->getMethod();
-        std::string resource = clientMsg->getRessource();
+        std::string resource = clientMsg->getResource();
         EV << "Received request: Method=" << method << ", Resource=" << resource << "\n";
         std::string response = processRequest(method, resource);
 
@@ -70,17 +71,17 @@ void HTTPServer::handleMessage(cMessage *msg) {
     }
 }
 
-std::string HTTPServer::processRequest(const std::string &method, const std::string &ressource) {
+std::string HTTPServer::processRequest(const std::string &method, const std::string &resource) {
     if (method != "GET") {
         return "HTTP/0.9 400 Bad Request\nOnly GET method is supported.";
     }
     std::string data;
-    if (ressource == "/images/logo.gif") {
+    if (resource == "/images/logo.gif") {
         data = "logo.gif";
-    } else if (ressource == "/images/TechnikErleben.png") {
+    } else if (resource == "/images/TechnikErleben.png") {
         data = "TechnikErleben.png";
-    }else {
-        std::string filePath = documentRoot + ressource;
+    } else {
+        std::string filePath = documentRoot + resource;
 
         if (!std::filesystem::exists(filePath)) {
             EV << "File not found: " << filePath << "\n";
@@ -94,6 +95,7 @@ std::string HTTPServer::processRequest(const std::string &method, const std::str
         }
 
         std::ostringstream fileContent;
+        fileContent << "Response from server on port " << srcPort << ": ";
         fileContent << file.rdbuf();
         file.close();
         EV << "Successfully read file: " << filePath << "\n";

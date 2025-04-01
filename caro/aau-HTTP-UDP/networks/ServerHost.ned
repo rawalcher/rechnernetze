@@ -35,12 +35,12 @@ module ServerHost
         }
         httpServer2: src.app.HTTPServer {
             parameters:
-                srcPort = 80;
+                srcPort = 81;
                 @display("p=222,85");
         }
         httpServer3: src.app.HTTPServer {
             parameters:
-                srcPort = 80;
+                srcPort = 82;
                 @display("p=130,185");
         }
         udp: src.udp.UDP {

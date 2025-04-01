@@ -31,7 +31,7 @@ class HTTPClient : public cSimpleModule
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
-    virtual void sendRequest(const char *ressource);
+    virtual void sendRequest(const char *resource);
     inet::IPv4Address *serverIPv4;
     inet::IPv4Address *clientIPv4;
     inet::IPv6Address *serverIPv6;

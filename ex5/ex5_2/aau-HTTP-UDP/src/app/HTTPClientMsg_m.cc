@@ -176,21 +176,21 @@ HTTPClientMsg& HTTPClientMsg::operator=(const HTTPClientMsg& other)
 void HTTPClientMsg::copy(const HTTPClientMsg& other)
 {
     this->method = other.method;
-    this->ressource = other.ressource;
+    this->resource = other.resource;
 }
 
 void HTTPClientMsg::parsimPack(omnetpp::cCommBuffer *b) const
 {
     ::omnetpp::cPacket::parsimPack(b);
     doParsimPacking(b,this->method);
-    doParsimPacking(b,this->ressource);
+    doParsimPacking(b,this->resource);
 }
 
 void HTTPClientMsg::parsimUnpack(omnetpp::cCommBuffer *b)
 {
     ::omnetpp::cPacket::parsimUnpack(b);
     doParsimUnpacking(b,this->method);
-    doParsimUnpacking(b,this->ressource);
+    doParsimUnpacking(b,this->resource);
 }
 
 const char * HTTPClientMsg::getMethod() const
@@ -203,14 +203,14 @@ void HTTPClientMsg::setMethod(const char * method)
     this->method = method;
 }
 
-const char * HTTPClientMsg::getRessource() const
+const char * HTTPClientMsg::getResource() const
 {
-    return this->ressource.c_str();
+    return this->resource.c_str();
 }
 
-void HTTPClientMsg::setRessource(const char * ressource)
+void HTTPClientMsg::setResource(const char * resource)
 {
-    this->ressource = ressource;
+    this->resource = resource;
 }
 
 class HTTPClientMsgDescriptor : public omnetpp::cClassDescriptor
@@ -219,7 +219,7 @@ class HTTPClientMsgDescriptor : public omnetpp::cClassDescriptor
     mutable const char **propertyNames;
     enum FieldConstants {
         FIELD_method,
-        FIELD_ressource,
+        FIELD_resource,
     };
   public:
     HTTPClientMsgDescriptor();
@@ -299,7 +299,7 @@ unsigned int HTTPClientMsgDescriptor::getFieldTypeFlags(int field) const
     }
     static unsigned int fieldTypeFlags[] = {
         FD_ISEDITABLE,    // FIELD_method
-        FD_ISEDITABLE,    // FIELD_ressource
+        FD_ISEDITABLE,    // FIELD_resource
     };
     return (field >= 0 && field < 2) ? fieldTypeFlags[field] : 0;
 }
@@ -314,7 +314,7 @@ const char *HTTPClientMsgDescriptor::getFieldName(int field) const
     }
     static const char *fieldNames[] = {
         "method",
-        "ressource",
+        "resource",
     };
     return (field >= 0 && field < 2) ? fieldNames[field] : nullptr;
 }
@@ -324,7 +324,7 @@ int HTTPClientMsgDescriptor::findField(const char *fieldName) const
     omnetpp::cClassDescriptor *base = getBaseClassDescriptor();
     int baseIndex = base ? base->getFieldCount() : 0;
     if (strcmp(fieldName, "method") == 0) return baseIndex + 0;
-    if (strcmp(fieldName, "ressource") == 0) return baseIndex + 1;
+    if (strcmp(fieldName, "resource") == 0) return baseIndex + 1;
     return base ? base->findField(fieldName) : -1;
 }
 
@@ -338,7 +338,7 @@ const char *HTTPClientMsgDescriptor::getFieldTypeString(int field) const
     }
     static const char *fieldTypeStrings[] = {
         "string",    // FIELD_method
-        "string",    // FIELD_ressource
+        "string",    // FIELD_resource
     };
     return (field >= 0 && field < 2) ? fieldTypeStrings[field] : nullptr;
 }
@@ -424,7 +424,7 @@ std::string HTTPClientMsgDescriptor::getFieldValueAsString(omnetpp::any_ptr obje
     HTTPClientMsg *pp = omnetpp::fromAnyPtr<HTTPClientMsg>(object); (void)pp;
     switch (field) {
         case FIELD_method: return oppstring2string(pp->getMethod());
-        case FIELD_ressource: return oppstring2string(pp->getRessource());
+        case FIELD_resource: return oppstring2string(pp->getResource());
         default: return "";
     }
 }
@@ -442,7 +442,7 @@ void HTTPClientMsgDescriptor::setFieldValueAsString(omnetpp::any_ptr object, int
     HTTPClientMsg *pp = omnetpp::fromAnyPtr<HTTPClientMsg>(object); (void)pp;
     switch (field) {
         case FIELD_method: pp->setMethod((value)); break;
-        case FIELD_ressource: pp->setRessource((value)); break;
+        case FIELD_resource: pp->setResource((value)); break;
         default: throw omnetpp::cRuntimeError("Cannot set field %d of class 'HTTPClientMsg'", field);
     }
 }
@@ -458,7 +458,7 @@ omnetpp::cValue HTTPClientMsgDescriptor::getFieldValue(omnetpp::any_ptr object, 
     HTTPClientMsg *pp = omnetpp::fromAnyPtr<HTTPClientMsg>(object); (void)pp;
     switch (field) {
         case FIELD_method: return pp->getMethod();
-        case FIELD_ressource: return pp->getRessource();
+        case FIELD_resource: return pp->getResource();
         default: throw omnetpp::cRuntimeError("Cannot return field %d of class 'HTTPClientMsg' as cValue -- field index out of range?", field);
     }
 }
@@ -476,7 +476,7 @@ void HTTPClientMsgDescriptor::setFieldValue(omnetpp::any_ptr object, int field, 
     HTTPClientMsg *pp = omnetpp::fromAnyPtr<HTTPClientMsg>(object); (void)pp;
     switch (field) {
         case FIELD_method: pp->setMethod(value.stringValue()); break;
-        case FIELD_ressource: pp->setRessource(value.stringValue()); break;
+        case FIELD_resource: pp->setResource(value.stringValue()); break;
         default: throw omnetpp::cRuntimeError("Cannot set field %d of class 'HTTPClientMsg'", field);
     }
 }

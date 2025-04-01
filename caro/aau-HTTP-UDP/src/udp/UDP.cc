@@ -29,74 +29,84 @@
 Define_Module(UDP);
 
 void UDP::initialize() {
-    // TODO implement as needed (or leave empty)
-    EV << "Initialized UDP\n";
+    EV << "Initialized UDP" << endl;
 }
 
 void UDP::handleMessage(cMessage *msg) {
-	if (msg->arrivedOn("fromUpperLayer")) {
-		// comes from application
-		this->handleAppMessage((cPacket*)msg);
-	}
-
-	else if (msg->arrivedOn("fromLowerLayer")) {
-		//comes from lower layer
-	    EV << "Stand der Dinge";
-		this->handleUDPSegment((cPacket*)msg);
-	}
+    if (msg->arrivedOn("fromUpperLayer")) {
+       // comes from application
+       this->handleAppMessage((cPacket*)msg);
+    }
+    else if (msg->arrivedOn("fromLowerLayer")) {
+       //comes from lower layer
+       this->handleUDPSegment((cPacket*)msg);
+    }
 }
 
 void UDP::handleAppMessage(cPacket *msg) {
-        EV << "UDP: Handling application layer message.\n";
+    EV << "UDP: Handling application layer message." << endl;
 
-        UDPControlInfo *controlInfo = check_and_cast<UDPControlInfo *>(msg->getControlInfo());
-	EV << "From app: srcPort=" << controlInfo->getSrcPort()
-   << ", destPort=" << controlInfo->getDestPort() << "\n";
-        UDPSegment *segment = new UDPSegment();
-        segment->setSrcPort(controlInfo->getSrcPort());
-        segment->setDstPort(controlInfo->getDestPort());
-        segment->setChecksum(0);
-        segment->encapsulate(msg);
-        segment->setLength(segment->getByteLength());
+    UDPControlInfo *controlInfo = check_and_cast<UDPControlInfo *>(msg->getControlInfo());
+    EV << "From app: srcPort=" << controlInfo->getSrcPort()
+       << ", destPort=" << controlInfo->getDestPort() << endl;
 
-        send(segment, "toLowerLayer");
-        return;
+    UDPSegment *segment = new UDPSegment();
+    segment->setSrcPort(controlInfo->getSrcPort());
+    segment->setDstPort(controlInfo->getDestPort());
+    segment->setChecksum(0);
+    segment->encapsulate(msg);
+    segment->setLength(segment->getByteLength());
+
+    send(segment, "toLowerLayer");
 }
 
-// TODO: raphael
 void UDP::handleUDPSegment(cPacket *msg) {
-	UDPSegment *segment = check_and_cast<UDPSegment *>(msg);
-	UDPControlInfo *controlInfo = new UDPControlInfo();
-	EV << "UDP received segment: srcPort=" << segment->getSrcPort()
-   << ", dstPort=" << segment->getDstPort() << "\n";
+    UDPSegment *segment = check_and_cast<UDPSegment *>(msg);
+    UDPControlInfo *controlInfo = new UDPControlInfo();
+    EV << "UDP received segment: srcPort=" << segment->getSrcPort()
+       << ", dstPort=" << segment->getDstPort() << "\n";
 
-	controlInfo->setSrcPort(segment->getSrcPort());
-	controlInfo->setDestPort(segment->getDstPort());
+    controlInfo->setSrcPort(segment->getSrcPort());
+    controlInfo->setDestPort(segment->getDstPort());
 
-	// Decapsulate the message
-	cPacket *encapsulatedMsg = segment->decapsulate();
-	encapsulatedMsg->setControlInfo(controlInfo);
+    // Decapsulate the message
+    cPacket *encapsulatedMsg = segment->decapsulate();
+    encapsulatedMsg->setControlInfo(controlInfo);
 
-	// Map port to gate index - simple mapping for this simulation
-	int gateIndex = 0;  // Default to first gate
-	int port = segment->getDstPort();
+    // Map port to gate index - simple mapping for this simulation
+    int gateIndex = 0;  // Default to first gate
+    int port = segment->getDstPort();
 
-	// Map ports to gate indices
-	if (port == 80) {
-		// Choose gate based on the server's ID
-		if (getParentModule()->getFullName() == std::string("server")) {
-			// This is the server - distribute to different servers round-robin or based on some logic
-			// For simplicity, just use first server
-			gateIndex = 0;
-		} else {
-			// This is the client - use the client's gate
-			gateIndex = 0;
-		}
-	} else if (port == 6666) {
-		// This is port for client
-		gateIndex = 0;
-	}
+    // Map ports to gate indices
+    if (getParentModule()->getFullName() == std::string("server")) {
+        // This is the server side UDP
 
-	send(encapsulatedMsg, "toUpperLayer", gateIndex);
-	delete segment;
+        // Determine which server should receive the message
+        if (port == 80) {
+            gateIndex = 0;  // Server 1
+        }
+        else if (port == 81) {
+            gateIndex = 1;  // Server 2
+        }
+        else if (port == 82) {
+            gateIndex = 2;  // Server 3
+        }
+        else {
+            EV << "Warning: Unknown destination port for server: " << port << endl;
+        }
+    }
+    else {
+        // This is the client side UDP
+
+        // Client receives all responses regardless of source port
+        if (port == 6666) {
+            gateIndex = 0;  // Client application
+        }
+        else {
+            EV << "Warning: Unknown destination port for client: " << port << endl;
+        }
+    }
+
+    send(encapsulatedMsg, "toUpperLayer", gateIndex);
+    delete segment;
 }

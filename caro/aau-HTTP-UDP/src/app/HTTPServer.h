@@ -17,28 +17,25 @@
 //
 // 621.800 (19W) Computer Networks and Network Programming
 
-#ifndef __AAU_HTTP_HTTPSERVER_H_
-#define __AAU_HTTP_HTTPSERVER_H_
+#ifndef __HTTPSERVER_H__
+#define __HTTPSERVER_H__
 
 #include <omnetpp.h>
-#include "../3rdParty/IPv4Address.h"
-#include "../3rdParty/IPv6Address.h"
+#include <string>
 
 using namespace omnetpp;
 
 class HTTPServer : public cSimpleModule
 {
-  protected:
+private:
     std::string documentRoot;
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
-    virtual std::string processRequest(const std::string &method, const std::string &resource);
-    inet::IPv4Address *serverIPv4;
-    inet::IPv4Address *clientIPv4;
-    inet::IPv6Address *serverIPv6;
-    inet::IPv6Address *clientIPv6;
     int srcPort;
     int destPort;
+
+protected:
+    virtual void initialize() override;
+    virtual void handleMessage(cMessage *msg) override;
+    std::string processRequest(const std::string &method, const std::string &resource);
 };
 
 #endif

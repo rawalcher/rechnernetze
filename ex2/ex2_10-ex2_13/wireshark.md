@@ -81,7 +81,7 @@ Laden Sie die Datei `dump_http.pcap` aus dem Moodle-Kurs herunter und analysiere
 
 6. HTTP (Hypertext Transfer Protocol)
     - Methode (z.B. GET): Art der Anfrage.
-    - URL: Angeforderte Ressource.
+    - URL: Angeforderte Resource.
     - HTTP-Version: Version des Protokolls.
     - Header-Felder: Weitere Infos (z.B. Host, User-Agent).
     

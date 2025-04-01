@@ -22,8 +22,8 @@ package src.app;
 simple HTTPClient
 {
     parameters:
-        int srcPort = default(6666);
-        int destPort = default(80);  // Added to match server port
+        int clientPort = default(6666);
+        int currentPort = default(80);
     gates:
         input fromLowerLayer;
         output toLowerLayer;
